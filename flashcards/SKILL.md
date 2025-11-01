@@ -20,7 +20,7 @@ Use this skill when users request:
 
 ## Quick Start
 
-To create flashcards, set up a Python virtual environment with reportlab, then use the `add_flashcards()` function:
+The skill automatically handles Python environment setup. Simply use the `add_flashcards()` function:
 
 ```python
 from scripts.create_flashcards import add_flashcards
@@ -28,7 +28,7 @@ from scripts.create_flashcards import add_flashcards
 # Define flashcards as a list of dictionaries
 flashcards = [
     {"front": "Question 1", "back": "Answer 1"},
-    {"front": "Question 2", "back": "Answer 2"},
+    {"front": "Question 2", "back": "Answer 2", "category": "Topic Name"},
     # ... up to any number of cards
 ]
 
@@ -36,15 +36,14 @@ flashcards = [
 add_flashcards(flashcards, "output.pdf")
 ```
 
+Categories are optional and will appear in the top-right corner of the back side of each card when provided.
+
 ## Setup Requirements
 
-Install the required dependency (reportlab) using a virtual environment:
-
-```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install reportlab
-```
+The skill handles setup automatically. When Claude Code uses this skill:
+- A virtual environment is created automatically if needed
+- Dependencies (reportlab) are installed automatically
+- No manual setup required
 
 ## Creating Flashcards
 
@@ -54,8 +53,8 @@ pip install reportlab
 from scripts.create_flashcards import add_flashcards
 
 cards = [
-    {"front": "7 × 8 = ?", "back": "56"},
-    {"front": "What is Python?", "back": "A programming language"},
+    {"front": "7 × 8 = ?", "back": "56", "category": "Math"},
+    {"front": "What is Python?", "back": "A programming language", "category": "Programming"},
 ]
 
 add_flashcards(cards, "my_flashcards.pdf")
@@ -104,12 +103,16 @@ This creates:
 
 ## Workflow
 
-1. **Gather content**: Collect or generate the questions and answers
-2. **Format data**: Structure as list of dictionaries with "front" and "back" keys
-3. **Choose printing mode**: Decide between single PDF (duplex) or separate PDFs (manual)
+When Claude Code creates flashcards for you, it will:
+1. **Gather content**: Collect or generate the questions and answers based on your request
+2. **Format data**: Structure as list of dictionaries with "front", "back", and optional "category" keys
+3. **Setup environment**: Automatically create venv and install dependencies (first time only)
 4. **Generate PDF(s)**: Call `add_flashcards()` with appropriate parameters
-5. **Print**: Follow instructions based on printer capabilities
-6. **Cut**: Use dotted lines as guides to separate individual cards
+5. **Deliver PDF**: Provide the PDF file ready for printing
+
+When you print:
+1. **Print**: Follow instructions based on printer capabilities (duplex or manual)
+2. **Cut**: Use dotted lines as guides to separate individual cards
 
 ## Resources
 
@@ -120,6 +123,7 @@ The main Python script for generating flashcard PDFs. Contains the `add_flashcar
 - 2x5 grid layout calculation
 - Front/back page alignment (mirroring for proper double-sided printing)
 - Cutting guide generation
+- Category display on back side of cards
 - Both single PDF and separate PDF modes
 
 **Key function:**
@@ -128,8 +132,14 @@ add_flashcards(flashcards_data, output_filename="my_flashcards.pdf", separate_pd
 ```
 
 **Parameters:**
-- `flashcards_data`: List of dicts with 'front' and 'back' keys
+- `flashcards_data`: List of dicts with 'front' and 'back' keys, and optional 'category' key (max 50 characters)
 - `output_filename`: Name of output PDF file
 - `separate_pdfs`: If True, creates separate files for fronts and backs
 
-The script is self-contained and can be executed directly or imported as a module.
+### scripts/ensure_venv.py
+
+A helper script that automatically sets up the Python virtual environment and installs dependencies. Claude Code uses this to ensure seamless operation without manual setup.
+
+### scripts/run.sh
+
+A bash wrapper script that handles venv activation and runs the flashcard generator. Alternative to the Python wrapper.

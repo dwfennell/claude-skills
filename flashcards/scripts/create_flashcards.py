@@ -12,7 +12,7 @@ def add_flashcards(flashcards_data, output_filename="my_flashcards.pdf", separat
     - Even pages: Back sides of cards (mirrored for proper alignment)
 
     Args:
-        flashcards_data: List of dicts with 'front' and 'back' keys
+        flashcards_data: List of dicts with 'front' and 'back' keys, and optional 'category' key
         output_filename: Name of output PDF file
         separate_pdfs: If True, creates two separate PDFs (one for fronts, one for backs)
                       This is useful for printers without duplex/double-sided printing support
@@ -20,7 +20,7 @@ def add_flashcards(flashcards_data, output_filename="my_flashcards.pdf", separat
     Example:
         cards = [
             {"front": "What is Python?", "back": "A programming language"},
-            {"front": "What is a list?", "back": "An ordered collection"},
+            {"front": "What is a list?", "back": "An ordered collection", "category": "Data Structures"},
         ]
         add_flashcards(cards, "python_flashcards.pdf")
 
@@ -137,6 +137,15 @@ def add_flashcards(flashcards_data, output_filename="my_flashcards.pdf", separat
             canvas_back.setLineWidth(1)
             canvas_back.rect(x, y, card_width, card_height)
 
+            # Draw category if present (top-right corner)
+            if "category" in card and card["category"]:
+                category = card["category"][:50]  # Limit to 50 characters
+                canvas_back.setFont("Helvetica", 8)
+                canvas_back.setFillColor(colors.grey)
+                category_x = x + card_width - 5 - canvas_back.stringWidth(category, "Helvetica", 8)
+                category_y = y + card_height - 12
+                canvas_back.drawString(category_x, category_y, category)
+
             # Draw back content (centered)
             canvas_back.setFont("Helvetica", 12)
             canvas_back.setFillColor(colors.black)
@@ -193,10 +202,10 @@ def add_flashcards(flashcards_data, output_filename="my_flashcards.pdf", separat
 if __name__ == "__main__":
     # Example of creating custom flashcards
     my_cards = [
-        {"front": "What is the capital of France?", "back": "Paris"},
-        {"front": "What is 2 + 2?", "back": "4"},
-        {"front": "What is the largest planet?", "back": "Jupiter"},
-        {"front": "7 × 8 = ?", "back": "56"},
-        {"front": "What is H2O?", "back": "Water"},
+        {"front": "What is the capital of France?", "back": "Paris", "category": "Geography"},
+        {"front": "What is 2 + 2?", "back": "4", "category": "Math"},
+        {"front": "What is the largest planet?", "back": "Jupiter", "category": "Astronomy"},
+        {"front": "7 × 8 = ?", "back": "56", "category": "Math"},
+        {"front": "What is H2O?", "back": "Water", "category": "Chemistry"},
     ]
     add_flashcards(my_cards, "example_flashcards.pdf")
